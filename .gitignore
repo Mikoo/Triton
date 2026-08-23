@@ -1,0 +1,21 @@
+# Archivos de caché de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Caché de pruebas
+.pytest_cache/
+.coverage
+
+# Entornos virtuales
+venv/
+.venv/
+env/
+
+# Archivos de logs generados en ejecuciones
+*.log
+*.gz
+
+# Configuraciones de editor
+.vscode/
+.idea/
