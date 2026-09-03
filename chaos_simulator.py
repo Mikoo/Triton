@@ -1,8 +1,11 @@
 import asyncio
 import gzip
 import json
+import sys
 import traceback
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
 
 from triton_telemetry.core import scan_all_providers
 
@@ -31,9 +34,7 @@ async def run_network_error_scenario() -> None:
             providers=["AWS"],
             timeout=5.0,
             chaos=False,
-            custom_urls={
-                "AWS": "https://dominio-que-no-existe-triton.invalid"
-            },
+            custom_urls={"AWS": "https://dominio-que-no-existe-triton.invalid"},
         )
     except* Exception as error_group:
         print("Se detectó un fallo de red:")
@@ -99,14 +100,10 @@ def validate_forensic_exception(data: dict) -> None:
 
     if cause:
         if "type" not in cause:
-            raise ValueError(
-                "La causa no contiene el tipo de excepción"
-            )
+            raise ValueError("La causa no contiene el tipo de excepción")
 
         if "message" not in cause:
-            raise ValueError(
-                "La causa no contiene el mensaje"
-            )
+            raise ValueError("La causa no contiene el mensaje")
 
         # Si la causa es un error HTTP de httpx,
         # verificar que conserve un código HTTP.
@@ -127,18 +124,13 @@ def validate_forensic_exception(data: dict) -> None:
                     504,
                 ]
             ):
-                raise ValueError(
-                    "El HTTPStatusError no contiene "
-                    "un código HTTP válido"
-                )
+                raise ValueError("El HTTPStatusError no contiene un código HTTP válido")
 
     # Verificar las notas forenses.
     notes = exception.get("notes", [])
 
     if not isinstance(notes, list):
-        raise ValueError(
-            "Las notas forenses deben estar en formato de lista"
-        )
+        raise ValueError("Las notas forenses deben estar en formato de lista")
 
     # Si existe una nota HTTP, debe contener
     # un código de estado válido.
@@ -158,10 +150,7 @@ def validate_forensic_exception(data: dict) -> None:
                     504,
                 ]
             ):
-                raise ValueError(
-                    "La nota HTTP no contiene "
-                    "un código de estado válido"
-                )
+                raise ValueError("La nota HTTP no contiene un código de estado válido")
 
 
 def validate_json_log(log_file: str) -> None:
@@ -194,18 +183,13 @@ def validate_json_log(log_file: str) -> None:
 
                 for field in required_fields:
                     if field not in data:
-                        raise ValueError(
-                            f"Falta el campo obligatorio '{field}'"
-                        )
+                        raise ValueError(f"Falta el campo obligatorio '{field}'")
 
                 # Auditoría forense de excepciones.
                 validate_forensic_exception(data)
 
             except (json.JSONDecodeError, ValueError) as error:
-                print(
-                    f"Registro JSON inválido en línea "
-                    f"{line_number}: {error}"
-                )
+                print(f"Registro JSON inválido en línea {line_number}: {error}")
                 return False
 
         return True
@@ -222,9 +206,7 @@ def validate_json_log(log_file: str) -> None:
     # 2. Buscar históricos comprimidos .gz
     # ---------------------------------------------------------
 
-    gz_files = list(
-        path.parent.glob(f"{path.name}.*.gz")
-    )
+    gz_files = list(path.parent.glob(f"{path.name}.*.gz"))
 
     for gz_path in gz_files:
         try:
@@ -234,19 +216,12 @@ def validate_json_log(log_file: str) -> None:
                 "rt",
                 encoding="utf-8",
             ) as gz_file:
-
                 if not validate_lines(gz_file):
-                    print(
-                        f"Error en archivo Gzip: "
-                        f"{gz_path.name}"
-                    )
+                    print(f"Error en archivo Gzip: {gz_path.name}")
                     return
 
         except (OSError, gzip.BadGzipFile) as error:
-            print(
-                f"Gzip inválido: "
-                f"{gz_path.name}: {error}"
-            )
+            print(f"Gzip inválido: {gz_path.name}: {error}")
             return
 
     print("Telemetría JSON validada correctamente.")
