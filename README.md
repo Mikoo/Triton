@@ -5,7 +5,7 @@
 > **Carrera:** Tecnicatura Universitaria en Gestión de Infraestructura Cloud y DevOps  
 > **Formador:** Lic. Juárez, Jacobo León  
 > **Grupo:** 15 (`NN`)  
-> **Enlace al Video de Defensa Grupal:** [Pendiente]
+> **Enlace al Video de Defensa Grupal:** https://www.youtube.com/watch?v=uZoLbzOBli4
 
 Monitor CLI oficial de **Triton Cloud Services**. Consulta en paralelo los nodos de telemetría de **AWS, Azure y GCP** mediante peticiones HTTP asíncronas reales contra APIs públicas en internet (`JSONPlaceholder` y `httpbin.org`), tolera latencias extremas y fallos concurrentes mediante Concurrencia Estructurada (`asyncio.TaskGroup` y `except*`), y persiste cada evento en un volcado JSON estructurado a través de un pipeline no bloqueante con rotación a 2 MB y compresión Gzip.
 
